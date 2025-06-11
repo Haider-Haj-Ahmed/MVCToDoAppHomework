@@ -20,6 +20,7 @@ namespace MvcTodoApp.Controllers
         /// </summary>
         public IActionResult Index()
         {
+            var tasks = _context.Tasks.ToList();
             return View(tasks);
         }
 
@@ -49,5 +50,25 @@ namespace MvcTodoApp.Controllers
                 task.IsComplete = true;
             return RedirectToAction("Index");
         }
+
+        [HttpPost] 
+    public IActionResult EditTask(int id, string newTitle) 
+    {
+        // Search for the task by ID
+        var task = _context.Tasks.FirstOrDefault(t => t.Id == id);
+    
+        // Ensure the task exists and the new title isn't empty
+        if (task == null || string.IsNullOrWhiteSpace(newTitle))
+        {
+            return BadRequest("Invalid task or title.");
+        }
+
+        // Update the task title
+        task.Title = newTitle;
+        _context.SaveChanges();
+
+        return RedirectToAction("Index");
+        }
+
     }
 }
